@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Document Tracker | Office of the City Administrator, Navotas City
+    </title>
+    <meta
+      name="description"
+      content="Track the status of documents received by the Office of the City Administrator, City Government of Navotas."
+    />
+    <meta name="theme-color" content="#03845d" />
+
+    <script>
+      // ===== SETTINGS =====
+      // 1. Your web app link from Apps Script (Deploy > Manage deployments > Web app URL, ends in /exec)
+      var TRACKER_URL =
+        "https://script.google.com/macros/s/AKfycbzDbbKDbiJ6VIS0K_zJbVE66WDNttqRf9lm7f23as9hpiQCfjkLaAaJmOqFXqaI_bU/exec";
+      // 2. Your Google Analytics 4 Measurement ID (starts with G-). Leave as is to turn analytics off.
+      var GA_ID = "G-XXXXXXXXXX";
+      // ====================
+
+      if (/^G-[A-Z0-9]{6,}$/.test(GA_ID) && GA_ID !== "G-XXXXXXXXXX") {
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          dataLayer.push(arguments);
+        };
+        gtag("js", new Date());
+        gtag("config", GA_ID);
+      }
+
+      // Searches reported by the tracker inside the frame -> Google Analytics events
+      window.addEventListener("message", function (e) {
+        var host = "";
+        try {
+          host = new URL(e.origin).hostname;
+        } catch (err) {
+          return;
+        }
+        if (!/(^|\.)googleusercontent\.com$/.test(host)) return; // only accept messages from Apps Script
+        var m = e.data;
+        if (!m || m.source !== "navotas-doc-tracker" || !window.gtag) return;
+        gtag("event", m.event, m.params || {});
+      });
+    </script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #ffffff;
+      }
+      body {
+        font-family:
+          "Google Sans Flex",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+      .loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b6b6b;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+      }
+      iframe {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading">Loading the Document Tracker…</div>
+    <iframe id="app" title="Document Tracker" allow="clipboard-write"></iframe>
+    <noscript
+      ><p class="loading">
+        Please turn on JavaScript to use the Document Tracker.
+      </p></noscript
+    >
+    <script>
+      document.getElementById("app").src = TRACKER_URL;
+    </script>
+  </body>
+</html>
